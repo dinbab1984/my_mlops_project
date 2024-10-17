@@ -1,0 +1,45 @@
+# The name of the bundle. run `databricks bundle schema` to see the full bundle settings schema.
+bundle:
+  name: my_mlops_project
+
+variables:
+  experiment_name:
+    description: Experiment name for the model training.
+    default: /Users/${workspace.current_user.userName}/${bundle.target}-my_mlops_project-experiment
+  model_name:
+    description: Model name for the model training.
+    default: my_mlops_project-model
+
+include:
+  # Resources folder contains ML artifact resources for the ML project that defines model and experiment
+  # And workflows resources for the ML project including model training -> validation -> deployment,
+  # feature engineering,  batch inference, quality monitoring, metric refresh, alerts and triggering retraining
+  - ./resources/batch-inference-workflow-resource.yml
+  - ./resources/model-workflow-resource.yml
+  - ./resources/feature-engineering-workflow-resource.yml
+  #- ./resources/ml-artifacts-resource.yml
+  # TODO: uncomment once monitoring inference table has been created
+  #- ./resources/monitoring-resource.yml
+
+# Deployment Target specific values for workspace
+targets:
+  dev:  # UC Catalog Name 
+    default: true
+    workspace:
+      # TODO: add dev workspace URL
+      host:
+
+
+
+  staging:
+    workspace:
+      host: https://adb-4373178962198533.13.azuredatabricks.net # $(STAGING_ADB_WORKSPACE_URL)
+
+  prod:
+    workspace:
+      host: https://adb-3782895479415317.17.azuredatabricks.net/ # $(PROD_ADB_WORKSPACE_URL)
+
+  test:
+    workspace:
+      host: https://adb-4373178962198533.13.azuredatabricks.net # $(STAGING_ADB_WORKSPACE_URL)
+
